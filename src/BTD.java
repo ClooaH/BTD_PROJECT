@@ -1,18 +1,27 @@
 import javax.swing.*;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
+import java.util.concurrent.TimeUnit;
 
 public class BTD extends Canvas implements Runnable {
 
-    int width = 16*100;
-    int height = 16*54;
+    int width = 16 * 100;
+    int height = 16 * 54;
     BufferStrategy bs;
     Thread thread;
     boolean running = false;
-    int x1,y1;
+    int x1, y1;
 
-    private BTD() {
+    int enemy2width = 65;
+    int enemy2y = 16*6;
+    int enemy2x = 0;
+
+    public BTD() {
         setSize(width, height);
         JFrame frame = new JFrame("BTD");
         frame.add(this);
@@ -20,6 +29,7 @@ public class BTD extends Canvas implements Runnable {
         frame.pack();
         frame.setVisible(true);
         this.addMouseListener(new ML());
+        this.addKeyListener(new KL());
     }
 
     public synchronized void start() {
@@ -71,7 +81,6 @@ public class BTD extends Canvas implements Runnable {
         draw(g);
         g.dispose();
         bs.show();
-//        repaint();
     }
 
     public void draw(Graphics g) {
@@ -81,17 +90,24 @@ public class BTD extends Canvas implements Runnable {
         drawtower3(g);
         drawenemy1(g);
         drawenemy2(g);
+
     }
 
     private void drawmap(Graphics g) {
         g.setColor(Color.GREEN);
-        g.fillRect(0, 0, 1600, 900);
+        g.fillRect(0, 0, 100 * 16, 54 * 16);
         g.setColor(Color.GRAY);
-        g.fillRect(0, 100, 250, 80);
-        g.fillRect(250, 100, 80, 600);
-        g.fillRect(250, 700, 350, 80);
-        g.fillRect(600, 450, 80, 330);
-        g.fillRect(600, 370, 1000, 80);
+        g.fillRect(0, 16 * 6, 16 * 16, 16 * 6);
+        g.fillRect(16 * 16, 16 * 6, 16 * 6, 16 * 40);
+        g.fillRect(16 * 16, 16 * 46, 16 * 22, 16 * 6);
+        g.fillRect(16 * 38, 16 * 26, 16 * 6, 16 * 26);
+        g.fillRect(16 * 38, 16 * 20, 16 * 62, 16 * 6);
+        g.setColor(Color.WHITE);
+        g.fillRect(60*16, 16*35,16*20,16*7);
+        g.setFont(new Font("PERMANENT MARKER", Font.ITALIC, 16*5));
+        g.setColor(Color.BLACK);
+        g.drawString("START", 61*16, 16*40);
+
     }
 
     private void drawtower1(Graphics g) {
@@ -125,7 +141,7 @@ public class BTD extends Canvas implements Runnable {
 
     private void drawenemy2(Graphics g) {
         g.setColor(Color.BLUE);
-        g.fillOval(700, 500, 65, 85);
+        g.fillOval(enemy2x, enemy2y, enemy2width, 85);
     }
 
     public static void main(String[] args) {
@@ -141,14 +157,56 @@ public class BTD extends Canvas implements Runnable {
     private class ML implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
-            x1 = mouseEvent.getX();
-            y1 = mouseEvent.getY();
-            System.out.println(x1 + " , " + y1);
+
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-
+        public void mousePressed(MouseEvent mouseEvent) {
+            x1 = mouseEvent.getX();
+            y1 = mouseEvent.getY();
+            System.out.println(x1 + "," + y1);
+            if (x1 >= 16*60 && x1 <= 16*80 && y1 >= 16*35 && y1 <= 16*42) {
+                for (int i = 0; i < 16*16; i++) {
+                    enemy2x++;
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(8);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (int i = 0; i < 16*40; i++) {
+                    enemy2y++;
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(8);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (int i = 0; i < 16*22; i++) {
+                    enemy2x++;
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(8);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (int i = 0; i < 16*26; i++) {
+                    enemy2y--;
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(8);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (int i = 0; i < 16*62; i++) {
+                    enemy2x++;
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(8);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
 
         @Override
@@ -158,11 +216,30 @@ public class BTD extends Canvas implements Runnable {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
+
+        }
+    }
+    public class KL implements KeyListener {
+
+        @Override
+        public void keyTyped(KeyEvent keyEvent) {
+            if (keyEvent.getKeyChar() == '2') {
+                System.out.println("Hallko");
+                System.exit(1);
+            }
+        }
+
+        @Override
+        public void keyPressed(KeyEvent keyEvent) {
+
+        }
+
+        @Override
+        public void keyReleased(KeyEvent keyEvent) {
 
         }
     }
